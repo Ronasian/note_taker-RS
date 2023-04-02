@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 
 const PORT = 3001;
 const notesData = require('./db/notes.json');
@@ -19,20 +20,49 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes
 app.get('/api/notes', (req,res) => res.json(notesData));
 
 app.post('/api/notes', (req, res) => {
-  console.info(`${req.method} request recieved to add a note`);
-  
-  let response;
+// Log that a POST request was received
+  console.info(`${req.method} request received to add a review`);
+  // Destructuring assignment for the items in req.body
+  const { title, text } = req.body;
 
-  if (req.body && req.body.title && req.body.text) {
-    response = {
-      status: 'success',
-      data: req.body
+  // If all the required properties are present
+  if (title && text) {
+    // Variable for the object we will save
+    const newNote = {
+      title,
+      text,
+      // review_id: uuid(),
     };
-    res.json(`Note has been added!`);
+
+    // Convert the data to a string so we can save it
+    fs.readFile("./db/notes.json", "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json('Eror in posting note');
+      } else {
+        const notes = JSON.parse(data);
+        notes.push(newNote);
+        // Write the data to file
+        fs.writeFile("./db/notes.json", JSON.stringify(notes, null, '\t'), (err) =>
+      err
+        ? console.error(err)
+        : console.log(
+            "Note has been written to notes.json file"
+          )
+        );
+      }
+    })
+    
+    const response = {
+      status: 'success',
+      body: newNote,
+    };
+    
+    console.log(response);
+    res.status(201).json(response);
   } else {
-    res.json('Note must contain title and text');
+    res.status(500).json('Error in posting review');
   }
-  console.log(req.body);
 });
 
 app.listen(PORT, () =>
