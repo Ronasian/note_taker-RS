@@ -22,7 +22,15 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req,res) => {
-  res.json(notesData)
+  // res.json(notesData)
+  fs.readFile("./db/notes.json", "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      let dataObj = JSON.parse(data);
+      res.json(dataObj);
+    }
+  })
 });
 
 app.post('/api/notes', (req, res) => {
@@ -71,7 +79,7 @@ app.post('/api/notes', (req, res) => {
   }
 });
 
-app.delete('/api/notes:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
   console.info(`${req.method} request received to delete a note`);
   const id = req.params.id;
   console.info(id);
@@ -93,6 +101,7 @@ app.delete('/api/notes:id', (req, res) => {
           )
         }
       }
+      res.redirect("/notes");
     }
   })
 });
