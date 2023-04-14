@@ -29,11 +29,7 @@ THEN I am presented with empty fields to enter a new note title and the note’s
 
 ## Deployed Application:
 ### Link:
-
-
-### Images:
-![initial]()
-![functional]()
+https://note-taker-rs.herokuapp.com/
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details
